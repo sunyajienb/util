@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author admin
- * У�������ʽ
+ * Ð£ÑéÓÊÏä¸ñÊ½
  * 
  */
 public class CheckEmail {
@@ -13,6 +13,9 @@ public class CheckEmail {
 			+ "[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
 	
 	public static boolean checkIfEmail(String email) {
+		if(email == null || email.trim().equals(""))
+			return false;
+		
 		Pattern pattern = Pattern.compile(check);
 		Matcher matcher = pattern.matcher(email);
 		boolean is = matcher.matches();
