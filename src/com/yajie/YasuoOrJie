@@ -1,0 +1,65 @@
+import java.io.ByteArrayInputStream;  
+import java.io.ByteArrayOutputStream;  
+import java.io.IOException;  
+import java.util.zip.GZIPInputStream;  
+import java.util.zip.GZIPOutputStream;  
+  
+public class GzipUtils {  
+    public static String compress(String str) throws IOException {  
+        if (str == null || str.length() == 0) {  
+            return str;  
+        }  
+        ByteArrayOutputStream out = new ByteArrayOutputStream();  
+        GZIPOutputStream gzip = new GZIPOutputStream(out);  
+        gzip.write(str.getBytes());  
+        gzip.close();  
+        return out.toString("ISO-8859-1"); // UTF-8 ISO-8859-1  
+    }  
+    // 解压缩  
+    public static String uncompress(String str) throws IOException {  
+        if (str == null || str.length() == 0) {  
+            return str;  
+        }  
+        ByteArrayOutputStream out = new ByteArrayOutputStream();  
+        ByteArrayInputStream in = new ByteArrayInputStream(  
+                str.getBytes("ISO-8859-1"));  
+        GZIPInputStream gunzip = new GZIPInputStream(in);  
+        byte[] buffer = new byte[256];  
+        int n;  
+        while ((n = gunzip.read(buffer)) >= 0) {  
+            out.write(buffer, 0, n);  
+        }  
+        // toString()使用平台默认编码，也可以显式的指定如toString("GBK")  
+        return out.toString();  
+    }  
+}  
+
+public static void main(String[] args) throws IOException {  
+  
+        String str = "msg=[{p1:\"12_22_235\",pu:\"1\",v:\"1.0.1\",net_work:\" \",ua_model:\" \",os_v:\"\",t:\"1\",rpage:\"1\",tm_1:2,tm_2:2,tm_3:2,tm_4:2,tm_5:2,rload:2},"  
+                + "{p1:\"2_22_235\",pu:\"1\",v:\"1.0.1\",net_work:\" \",ua_model:\" \",os_v:\"\",t:\"1\",rpage:\"1\",tm_1:2,tm_2:2,tm_3:2,tm_4:2,tm_5:2,rload:2},"  
+                + "{p1:\"2_22_235\",pu:\"1\",v:\"1.0.1\",net_work:\" \",ua_model:\" \",os_v:\"\",t:\"1\",rpage:\"1\",tm_1:2,tm_2:2,tm_3:2,tm_4:2,tm_5:2,rload:2}]";  
+          
+        HttpClient httpClient = new DefaultHttpClient();  
+        HttpPost method = new HttpPost("http://localhost:8080/WebTest/ReciveAndUnzipServlet?a=test1");  
+        method.addHeader("Content-type","application/json; charset=ISO-8859-1");  
+        method.setHeader("Accept", "application/json");  
+        method.setHeader("Content-Encoding", "gzip");  
+        method.setEntity(new StringEntity(GzipUtils.compress(str), Charset.forName("ISO-8859-1")));  
+  
+        HttpResponse response = httpClient.execute(method);  
+          
+        int statusCode = response.getStatusLine().getStatusCode();  
+          
+        if (statusCode != HttpStatus.SC_OK) {  
+            System.out.println("error...");  
+        }  
+  
+        // Read the response body  
+        String body = EntityUtils.toString(response.getEntity());  
+          
+          
+        System.out.println(body);  
+    }  
+    
+    
