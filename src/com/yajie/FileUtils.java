@@ -8,6 +8,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Jay Sun
+ * 直接使用org.apache.commons.io.FileUtils工具类
+ * 
+ */
 public class FileUtils {
 
 	public static void main(String[] args) {
